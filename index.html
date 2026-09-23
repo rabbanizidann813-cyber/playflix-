@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PlayFlix - Streaming Film</title>
+
+  <!-- Meta Tag Aplikasi Mobile / PWA -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#e50914">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #141414;
+      color: #ffffff;
+      padding-bottom: 40px;
+    }
+
+    /* Navbar Header */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 20px;
+      background: #000000;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.8);
+    }
+
+    .logo {
+      color: #e50914;
+      font-size: 24px;
+      font-weight: 900;
+      letter-spacing: 1.5px;
+    }
+
+    .btn-login {
+      background: #e50914;
+      color: #ffffff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      font-weight: bold;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    /* Hero Banner */
+    .hero {
+      position: relative;
+      height: 320px;
+      background: linear-gradient(to top, #141414 10%, transparent 90%), 
+                  url('https://images.unsplash.com/photo-1574375927938-d5a98e8ffe85?q=80&w=1000') center/cover;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 20px;
+    }
+
+    .hero h1 {
+      font-size: 28px;
+      margin-bottom: 8px;
+    }
+
+    .hero p {
+      font-size: 13px;
+      color: #cccccc;
+      margin-bottom: 15px;
+      line-height: 1.4;
+      max-width: 90%;
+    }
+
+    .btn-play-hero {
+      background: #ffffff;
+      color: #000000;
+      border: none;
+      padding: 10px 20px;
+      font-weight: bold;
+      border-radius: 4px;
+      cursor: pointer;
+      width: fit-content;
+      font-size: 14px;
+    }
+
+    /* Kategori & List Film */
+    .category-title {
+      font-size: 18px;
+      font-weight: bold;
+      margin: 25px 20px 12px;
+      border-left: 4px solid #e50914;
+      padding-left: 10px;
+    }
+
+    .movie-row {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      padding: 0 20px 10px;
+      scrollbar-width: none;
+    }
+
+    .movie-row::-webkit-scrollbar {
+      display: none;
+    }
+
+    .movie-card {
+      min-width: 120px;
+      width: 120px;
+      background: #1f1f1f;
+      border-radius: 6px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .movie-card:active {
+      transform: scale(0.95);
+    }
+
+    .movie-card img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+    }
+
+    .movie-card-info {
+      padding: 8px;
+      text-align: center;
+    }
+
+    .movie-title {
+      font-size: 12px;
+      font-weight: bold;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .btn-card-play {
+      background: #e50914;
+      color: #fff;
+      border: none;
+      width: 100%;
+      padding: 5px 0;
+      font-size: 11px;
+      font-weight: bold;
+      border-radius: 3px;
+      margin-top: 6px;
+      cursor: pointer;
+    }
+
+    /* Modal Video Player */
+    .player-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.95);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    .player-box {
+      width: 90%;
+      max-width: 700px;
+      background: #000;
+      border-radius: 8px;
+      padding: 15px;
+      position: relative;
+      border: 1px solid #333;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 15px;
+      font-size: 28px;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    video {
+      width: 100%;
+      border-radius: 4px;
+      margin-top: 15px;
+    }
+
+    /* Pricing Section */
+    .pricing-section {
+      padding: 20px;
+      text-align: center;
+    }
+
+    .pricing-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      margin-top: 15px;
+    }
+
+    .price-card {
+      background: #1f1f1f;
+      border-radius: 8px;
+      padding: 20px;
+      border: 1px solid #333;
+    }
+
+    .price-card.featured {
+      border: 2px solid #e50914;
+      background: #260a0a;
+    }
+
+    .price-amount {
+      font-size: 24px;
+      font-weight: bold;
+      color: #e50914;
+      margin: 10px 0;
+    }
+
+    .price-features {
+      list-style: none;
+      font-size: 13px;
+      color: #bbb;
+      margin-bottom: 15px;
+      line-height: 1.8;
+    }
+
+    .btn-buy {
+      background: #e50914;
+      color: #fff;
+      border: none;
+      width: 100%;
+      padding: 10px;
+      font-weight: bold;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <header>
+    <div class="logo">PLAYFLIX</div>
+    <button class="btn-login">Masuk</button>
+  </header>
+
+  <!-- Video Player Modal -->
+  <div id="playerModal" class="player-modal">
+    <div class="player-box">
+      <span class="close-btn" onclick="closeVideo()">&times;</span>
+      <h3 id="currentMovieTitle" style="color: #e50914; font-size: 16px;">Judul Film</h3>
+      <video id="videoPlayer" controls>
+        <source id="videoSrc" src="" type="video/mp4">
+        Browser tidak mendukung video ini.
+      </video>
+    </div>
+  </div>
+
+  <!-- Main Hero Banner -->
+  <div class="hero">
+    <h1>Sintel</h1>
+    <p>Petualangan seorang gadis muda yang mencari naga sahabatnya di dunia yang luas dan penuh bahaya.</p>
+    <button class="btn-play-hero" onclick="openVideo('Sintel', 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4')">▶ Putar Film</button>
+  </div>
+
+  <!-- Section 1: Trending -->
+  <div class="category-title">Sedang Tren</div>
+  <div class="movie-row">
+    <div class="movie-card" onclick="openVideo('Big Buck Bunny', 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4')">
+      <img src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=300" alt="Big Buck Bunny">
+      <div class="movie-card-info">
+        <div class="movie-title">Big Buck Bunny</div>
+        <button class="btn-card-play">▶ Tonton</button>
+      </div>
+    </div>
+    <div class="movie-card" onclick="openVideo('Elephant Dream', 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4')">
+      <img src="https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=300" alt="Elephant Dream">
+      <div class="movie-card-info">
+        <div class="movie-title">Elephant Dream</div>
+        <button class="btn-card-play">▶ Tonton</button>
+      </div>
+    </div>
+    <div class="movie-card" onclick="openVideo('Tears of Steel', 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/TearsOfSteel.mp4')">
+      <img src="https://images.unsplash.com/photo-1478720568477-152d9b164e26?w=300" alt="Tears of Steel">
+      <div class="movie-card-info">
+        <div class="movie-title">Tears of Steel</div>
+        <button class="btn-card-play">▶ Tonton</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 2: Action -->
+  <div class="category-title">Aksi & Balapan</div>
+  <div class="movie-row">
+    <div class="movie-card" onclick="openVideo('Bullrun Race', 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WeAreGoingOnBullrun.mp4')">
+      <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=300" alt="Bullrun Race">
+      <div class="movie-card-info">
+        <div class="movie-title">Bullrun Race</div>
+        <button class="btn-card-play">▶ Tonton</button>
+      </div>
+    </div>
+    <div class="movie-card" onclick="openVideo('Speed Chase', 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/WhatCarCanYouGetForAGrand.mp4')">
+      <img src="https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?w=300" alt="Speed Chase">
+      <div class="movie-card-info">
+        <div class="movie-title">Speed Chase</div>
+        <button class="btn-card-play">▶ Tonton</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 3: Subscription Plans -->
+  <div class="pricing-section">
+    <h2 style="font-size: 20px;">Paket Langganan PlayFlix</h2>
+    <div class="pricing-grid">
+      <div class="price-card">
+        <h3>Dasar</h3>
+        <div class="price-amount">Rp 49.000 <span style="font-size: 12px; color: #888;">/bln</span></div>
+        <ul class="price-features">
+          <li>Kualitas 720p HD</li>
+          <li>Nonton di 1 Perangkat</li>
+        </ul>
+        <button class="btn-buy">Pilih Paket</button>
+      </div>
+
+      <div class="price-card featured">
+        <h3>Standar (Populer)</h3>
+        <div class="price-amount">Rp 99.000 <span style="font-size: 12px; color: #888;">/bln</span></div>
+        <ul class="price-features">
+          <li>Kualitas 1080p Full HD</li>
+          <li>Nonton di 2 Perangkat</li>
+          <li>Bisa Unduh Film</li>
+        </ul>
+        <button class="btn-buy">Pilih Paket</button>
+      </div>
+
+      <div class="price-card">
+        <h3>Sultan / Premium</h3>
+        <div class="price-amount">Rp 150.000 <span style="font-size: 12px; color: #888;">/bln</span></div>
+        <ul class="price-features">
+          <li>Kualitas 4K Ultra HD</li>
+          <li>Nonton di 4 Perangkat</li>
+          <li>Audio Spasial & Unduh</li>
+        </ul>
+        <button class="btn-buy">Pilih Paket</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function openVideo(title, url) {
+      document.getElementById('currentMovieTitle').innerText = title;
+      document.getElementById('videoSrc').src = url;
+      var player = document.getElementById('videoPlayer');
+      player.load();
+      player.play();
+      document.getElementById('playerModal').style.display = 'flex';
+    }
+
+    function closeVideo() {
+      var player = document.getElementById('videoPlayer');
+      player.pause();
+      document.getElementById('playerModal').style.display = 'none';
+    }
+  </script>
+</body>
+</html>
